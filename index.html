@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact form To email Using email</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icon/favicon-16x16.png">
+    <link rel="manifest" href="icon/site.webmanifest">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- popup area  -->
+            <div class="popup" id="popup">
+                <div class="icon">
+                    <h2>✔</h2>
+                </div>
+                <h3>Thank You ! </h3>
+                <p>your message is submitted you will get an email please check</p>
+                <button id="okay_btn">Okay</button>
+            </div>
+            <!-- form area  -->
+            <form id="form">
+                <h3>Get In Tuch</h3>
+                <div class="token">
+                    <span>Collect Your Access Token :</span>
+                    <input class="form_design" id="token" value="" name="token" readonly>
+                </div>
+                <input class="form_design" type="text" name="name" id="name" placeholder="your name" required>
+                <input class="form_design" type="email" name="email" id="email" placeholder="your email " required>
+
+                <div class="Phone">
+                    <select name="countryCode" class="form_design" id="select_country" onchange="selectCountry()">
+                        <option value="">Country</option>
+                        <option value="bd">Bangladesh</option>
+                        <option value="uk">UK</option>
+                        <option value="us">US</option>
+                        <option value="canada">Canada</option>
+                        <option value="pt">Pakistan</option>
+                        <option value="id">India</option>
+                    </select>
+                    <input class="form_design" type="tell" name="phone" id="phone" placeholder="Phone number" required
+                        value="">
+                </div>
+
+                <span class="error" id="message-error"></span>
+                <textarea class="form_design" name="message" id="message" rows="4"
+                    placeholder="Write somthing for us..."></textarea>
+                <button type="submit" id="button">Send Message</button>
+                <a href="https://script.google.com/macros/s/AKfycbyCv7ey7IPbgbEN3MpDJB2VBU8YzMzGvdk30kV4tNesaqpUqjRvFZddXqky_9ZEQjfn/exec"
+                    target="_blank" class="btn_design"> check Your entry are you really there ! </a>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init('-eMbQ5bfoXcePqy0S')
+    </script>
+    <script>
+
+        const btn = document.getElementById('button');
+        var formId = document.getElementById('form');
+
+        formId.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            btn.value = 'Sending...';
+
+            const serviceID = 'default_service';
+            const templateID = 'template_waofgpc';
+
+            emailjs.sendForm(serviceID, templateID, this)
+                .then(() => {
+                    btn.value = 'Send Email';
+                    // from to google sheet data transfar 
+                    let data = new FormData(formId);
+                    fetch("https://script.google.com/macros/s/AKfycbylU86HA7eRor_e_YxdzQheVbs09usmkgrTI1zimxdBBG_fJCU7--Z1ZCr2n39onO2O0A/exec", {
+                        method: "POST",
+                        body: data
+                    })
+                    // popup function 
+                    document.getElementById('form').setAttribute("style", "display:none;")
+                    document.getElementById("popup").classList.add("open_popup");
+                }, (err) => {
+                    btn.value = 'Send Email';
+                    alert(JSON.stringify(err));
+                });
+        });
+        // remove popup 
+        var okay_btn = document.getElementById("okay_btn");
+        okay_btn.addEventListener("click", () => {
+            okay_btn.classList.remove("open_popup");
+            location.reload();
+        })
+
+        // randon  ticket genaretor 
+        create_random_string(5)
+        function create_random_string(string_length) {
+            var random_string = "";
+            var character = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&abcdefghijklmnopqrstuvwxyz';
+            for (var i, i = 0; i < string_length; i++) {
+                random_string += character.charAt(Math.floor(Math.random() * string_length))
+            }
+            console.log(random_string);
+            document.getElementById("token").value = random_string;
+        }
+        // country select js
+        function selectCountry() {
+            var country = document.getElementById("select_country").value;
+            var phone = document.getElementById('phone');
+            switch (country) {
+                case "bd":
+                    document.getElementById('phone').value = "+880";
+                    break;
+
+                case "uk":
+                    document.getElementById('phone').value = "+44";
+                    console.log(country)
+                    break;
+
+                case "us":
+                    document.getElementById('phone').value = "+1";
+                    break;
+                case "canada":
+                    document.getElementById('phone').value = "+237";
+                    break;
+                case "pt":
+                    document.getElementById('phone').value = "+92";
+                    break;
+                case "id":
+                    document.getElementById('phone').value = "+91";
+                    break;
+                default:
+                    document.getElementById('phone').value = "+880";
+            }
+        }
+    </script>
+</body>
+
+</html>
